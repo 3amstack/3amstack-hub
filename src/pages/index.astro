@@ -1,11 +1,333 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// src/pages/index.astro
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3amstack - Where Ideas Spawn at 3am</title>
+    <meta name="description" content="A collection of web apps and experiments built in the early hours.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --text: #e0e0e0;
+            --accent: #00ff88;
+            --accent-dim: #00ff8833;
+            --border: #1a1a1a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--accent);
+            text-transform: lowercase;
+        }
+
+        .hero {
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .glitch {
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 900;
+            line-height: 0.9;
+            margin-bottom: 2rem;
+            letter-spacing: -0.03em;
+            position: relative;
+        }
+
+        .glitch span {
+            display: block;
+        }
+
+        .accent-text {
+            color: var(--accent);
+        }
+
+        .time {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            color: #666;
+            font-weight: 300;
+            margin-bottom: 3rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            max-width: 600px;
+            margin-bottom: 3rem;
+            color: #888;
+            font-weight: 300;
+        }
+
+        .cta {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .cta:hover {
+            color: var(--bg);
+        }
+
+        .cta:hover::before {
+            left: 0;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 4rem 0;
+            margin-bottom: 4rem;
+        }
+
+        .app-card {
+            background: var(--border);
+            border: 1px solid #2a2a2a;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .app-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+        }
+
+        .app-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .app-desc {
+            color: #888;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .app-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: var(--accent-dim);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border);
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        footer a:hover {
+            opacity: 0.7;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transition: transform 0.2s ease;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+
+        @media (max-width: 768px) {
+            .cursor-follower {
+                display: none;
+            }
+            
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grain"></div>
+    <div class="cursor-follower" id="cursor"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">3amstack</div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <h1 class="glitch">
+                    <span>Building</span>
+                    <span class="accent-text">Wild Ideas</span>
+                    <span>At Night</span>
+                </h1>
+                <div class="time" id="clock">03:00:00</div>
+                <p class="subtitle">
+                    A digital playground for experimental web apps and creative chaos. 
+                    Because the best ideas strike when everyone else is sleeping.
+                </p>
+                <a href="#apps" class="cta">Explore Projects</a>
+            </section>
+
+            <section id="apps" class="apps-grid">
+                <div class="app-card">
+                    <h2 class="app-title">Project Alpha</h2>
+                    <p class="app-desc">Real-time collaborative canvas. Draw, create, and watch chaos unfold.</p>
+                    <span class="app-status">In Progress</span>
+                </div>
+
+                <div class="app-card">
+                    <h2 class="app-title">Midnight Notes</h2>
+                    <p class="app-desc">Encrypted note-taking for your 3am thoughts. No cloud, just code.</p>
+                    <span class="app-status">Coming Soon</span>
+                </div>
+
+                <div class="app-card">
+                    <h2 class="app-title">Byte Pulse</h2>
+                    <p class="app-desc">Visualize your code commits in real-time with audio feedback.</p>
+                    <span class="app-status">Concept</span>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Built with Astro.js at ungodly hours • <a href="https://github.com/yourusername/3amstack-hub" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Live clock
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const clockEl = document.getElementById('clock');
+            if (clockEl) {
+                clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Custom cursor
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            if (cursor) {
+                cursor.style.left = e.clientX - 10 + 'px';
+                cursor.style.top = e.clientY - 10 + 'px';
+            }
+        });
+
+        // Cursor grow on hover
+        const interactiveElements = document.querySelectorAll('a, .app-card');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                if (cursor) cursor.style.transform = 'scale(2)';
+            });
+            el.addEventListener('mouseleave', () => {
+                if (cursor) cursor.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
